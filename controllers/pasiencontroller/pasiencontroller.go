@@ -1,6 +1,7 @@
 package pasiencontroller
 
 import (
+	"log"
 	"net/http"
 	"text/template"
 
@@ -11,11 +12,17 @@ import (
 var pasienModel = models.NewPasienModel()
 
 func Index(response http.ResponseWriter, request *http.Request) {
+
+	pasien, _ := pasienModel.FindAll()
+	data := map[string]interface{}{
+		"pasien": pasien,
+	}
+
 	temp, err := template.ParseFiles("views/pasien/index.html")
 	if err != nil {
 		panic(err)
 	}
-	temp.Execute(response, nil)
+	temp.Execute(response, data)
 }
 
 // tambah data
@@ -23,7 +30,8 @@ func Add(response http.ResponseWriter, request *http.Request) {
 	if request.Method == http.MethodGet {
 		temp, err := template.ParseFiles("views/pasien/add.html")
 		if err != nil {
-			panic(err)
+			// panic(err)
+			log.Println("Error:", err)
 		}
 
 		temp.Execute(response, nil)
@@ -44,7 +52,7 @@ func Add(response http.ResponseWriter, request *http.Request) {
 			"pesan": "data pasien berhasil ditambahkan",
 		}
 
-		temp, _ := template.ParseFiles("view/pasien/add.html")
+		temp, _ := template.ParseFiles("views/pasien/add.html")
 		temp.Execute(response, data)
 	}
 }
